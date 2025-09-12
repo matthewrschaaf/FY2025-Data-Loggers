@@ -122,3 +122,46 @@ ggsave(
   height = 7,
   dpi = 1200
 )
+
+
+# --- Prepare the Data (Outflow Graphs) ----
+outflow_data <- Salt$outflow %>%
+  filter(!is.na(CFS_INST_VAL))
+
+
+# --- Define the Fixed Axis Limits (Outflow Graphs) ----
+x_axis_start <- as.POSIXct("2024-03-01 00:00:00")
+x_axis_end   <- as.POSIXct("2025-07-31 00:00:00")
+
+
+# --- Build the Plot (Outflow Graphs) ----
+outflow_graph <- ggplot(outflow_data, aes(x = DateTime, y = CFS_INST_VAL)) +
+  
+  geom_line(color = "steelblue", linewidth = 0.8) +
+  
+  # --- Format the Axes and Labels ---
+  scale_x_datetime(
+    limits = c(x_axis_start, x_axis_end),
+    date_breaks = "2 months",
+    labels = label_date_short(format = c("%Y", "%b"))
+  ) +
+  
+  labs(
+    title = "Instantaneous Outflow at TAR",
+    subtitle = "Data from Salt River Loggers",
+    y = "Outflow (CFS)",
+    x = "Date"
+  ) +
+  
+
+  theme_minimal()
+
+
+# --- Export the Graph to a PNG File (Outflow Graphs) ----
+ggsave(
+  filename = "Salt_Outflow_Graph.png",
+  plot = outflow_graph,
+  width = 14,
+  height = 7,
+  dpi = 1200
+)
