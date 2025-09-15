@@ -24,29 +24,27 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       h3("Data Source"),
-      
-      selectInput(
-        inputId = "data_source",
-        label = "Select River Basin:",
-        choices = c("Salt", "Licking"),
-        selected = "Salt"
-      ),
-      
+      selectInput("data_source", "Select River Basin:",
+                  choices = c("Salt", "Licking"), selected = "Salt"),
       hr(),
-      
       h3("Logger Selection"),
       p("Select one or more loggers to display."),
       uiOutput("logger_checkboxes_ui"),
-      
       hr(),
-      
       h3("Display Options"),
       checkboxInput("show_guides", "Show Guide Curves", value = FALSE),
-      checkboxInput("show_ranges", "Show Statistical Ranges", value = FALSE)
+      checkboxInput("show_ranges", "Show Statistical Ranges", value = FALSE),
+      checkboxInput("show_outflow_plot", "Show Outflow Plot", value = FALSE),
     ),
     
     mainPanel(
-      plotlyOutput("logger_plot", height = "600px")
+      plotlyOutput("logger_plot", height = "500px"),
+      
+      conditionalPanel(
+        condition = "input.show_outflow_plot == true",
+        hr(),
+        plotlyOutput("outflow_plot", height = "300px")
+      )
     )
   )
 )
@@ -157,7 +155,30 @@ server <- function(input, output) {
     
     ggplotly(p, tooltip = "text")
   })
+  
+  
+# --- Outflow Plot Logic ---
+  reactive_outflow_df <- reactive({
+    if (input$data_source == "Salt") Salt$outflow
+    else Licking$outflow
+  })
+  
+  output$outflow_plot <- renderPlotly({
+    outflow_data <- reactive_outflow_df()
+    p_outflow <- ggplot(outflow_data, aes(x = DateTime, y = CFS_INST_VAL)) +
+      geom_line(color = "steelblue") +
+      scale_x_datetime(
+        limits = c(reactive_xaxis_start(), reactive_xaxis_end()),
+        date_breaks = "2 months",
+        labels = label_date_short(format = c("%Y", "%b"))
+      ) +
+      labs(title = "Instantaneous Outflow", y = "Outflow (CFS)", x = NULL) +
+      theme_minimal(base_size = 14)
+    ggplotly(p_outflow)
+  })
+
 }
+
 
 # --- Run the App ----
 shinyApp(ui = ui, server = server)
