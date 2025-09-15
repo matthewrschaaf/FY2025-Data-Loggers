@@ -20,10 +20,9 @@ salt_dt <- salt_dt[!is.na(DateTime)]
 unique_loggers <- unique(salt_dt$Logger)
 results_list <- vector("list", length = length(unique_loggers))
 
-
+# --- Loop Through Each Salt Logger to Calculate Stats and Show Progress ----
 execution_time <- system.time({
  
-# --- Loop Through Each Salt Logger to Calculate Stats and Show Progress ----
   for (i in seq_along(unique_loggers)) {
     
     current_logger <- unique_loggers[i]
@@ -86,6 +85,7 @@ licking_dt <- licking_dt[!is.na(DateTime)]
 # --- Prepare for the Loop ---
 unique_loggers <- unique(licking_dt$Logger)
 results_list <- vector("list", length = length(unique_loggers))
+
 
 # --- Loop Through Each Licking Logger to Calculate Stats and Show Progress ----
 execution_time <- system.time({
