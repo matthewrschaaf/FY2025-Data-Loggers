@@ -12,6 +12,23 @@ for (pkg in required_packages) {
 message("All required packages are loaded.")
 
 
+# --- Define a Function for Defining Data Segments ----
+add_data_segments <- function(df) {
+  df %>%
+    arrange(Logger, DateTime) %>%
+    group_by(Logger) %>%
+    mutate(
+      time_gap = as.numeric(difftime(DateTime, lag(DateTime), units = "mins")),
+      data_segment = cumsum(is.na(lag(DateTime)) | time_gap > 15)
+    ) %>%
+    ungroup() %>%
+    select(-time_gap)
+}
+
+Salt$stats_df <- add_data_segments(Salt$stats_df)
+Licking$stats_df <- add_data_segments(Licking$stats_df)
+
+
 # --- Define File Path and Column Types (Guide Curve)----
 guide_curve_path <- "O:/ED/Private/Water Quality/Data/FY2025/2025 Data Loggers/FY2025-Data-Loggers/Excel/CRR_TAR_GuideCurves.xlsx"
 

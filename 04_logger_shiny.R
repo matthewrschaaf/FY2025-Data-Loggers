@@ -112,13 +112,13 @@ server <- function(input, output) {
     if (input$show_ranges) {
       p <- p + 
         geom_ribbon(data = filtered_data, 
-                    aes(x = DateTime, ymin = Temp_min, ymax = Temp_max, group = Logger, text = paste("Logger:", Logger,
+                    aes(x = DateTime, ymin = Temp_min, ymax = Temp_max, group = data_segment, text = paste("Logger:", Logger,
                                                                                                      "<br>DateTime:", DateTime,
                                                                                                      "<br>Max Temp:", round(Temp_max, 2),
                                                                                                      "<br>Min Temp:", round(Temp_min, 2))), 
                     fill = "darkorange", alpha = 0.1) +
         geom_ribbon(data = filtered_data, 
-                    aes(x = DateTime, ymin = Temp_25th, ymax = Temp_75th, group = Logger, text = paste("Logger:", Logger,
+                    aes(x = DateTime, ymin = Temp_25th, ymax = Temp_75th, group = data_segment, text = paste("Logger:", Logger,
                                                                                                        "<br>DateTime:", DateTime,
                                                                                                        "<br>75th percentile:", round(Temp_75th, 2),
                                                                                                        "<br>25th percentile:", round(Temp_25th, 2))), 
@@ -127,7 +127,7 @@ server <- function(input, output) {
     
     p <- p + 
           geom_line(data = filtered_data, 
-                    aes(x = DateTime, y = Temp_median, color = Logger, group = Logger, text = paste("Logger:", Logger,
+                    aes(x = DateTime, y = Temp_median, color = Logger, group = data_segment, text = paste("Logger:", Logger,
                                                                                                     "<br>DateTime:", DateTime,
                                                                                                     "<br>Temp_median:", round(Temp_median, 2))), 
                     linewidth = 0.4)
