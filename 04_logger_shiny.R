@@ -43,7 +43,7 @@ ui <- fluidPage(
       conditionalPanel(
         condition = "input.show_outflow_plot == true",
         hr(),
-        plotlyOutput("outflow_plot", height = "300px")
+        plotlyOutput("outflow_plot", height = "500px")
       )
     )
   )
@@ -100,7 +100,9 @@ server <- function(input, output) {
     stats_data <- reactive_stats_df()
     guide_data <- reactive_guide_curve()
     
-    req(input$selected_loggers)
+    validate(
+      need(input$selected_loggers, "Please select a logger to display.")
+    )
     
     filtered_data <- stats_data %>%
       filter(Logger %in% input$selected_loggers)
@@ -181,4 +183,4 @@ server <- function(input, output) {
 
 
 # --- Run the App ----
-shinyApp(ui = ui, server = server)
+print(shinyApp(ui = ui, server = server))
